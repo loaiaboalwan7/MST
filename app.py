@@ -307,4 +307,3 @@ if not st.session_state.get('user_email'):
 if st.session_state.get('current_view') == "🏠 الواجهة الرئيسية":
     st.sidebar.markdown("### 🔒 نظام الحماية النشط")
     st.sidebar.info(f"👤 مرحباً بك:\n\n{st.session_state.get('user_email', 'غير مسجل')}")
-r_email}")
