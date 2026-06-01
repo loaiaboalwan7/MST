@@ -271,32 +271,40 @@ if 'current_view' not in st.session_state:
     st.session_state.current_view = "🏠 الواجهة الرئيسية"
 
 # شاشة تسجيل الدخول الموحدة للفريق لحجب أي وصول خارجي غير مصرح به
-if not st.session_state.logged_in:
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image("https://postimg.co", width=180, use_container_width=False)
-        st.markdown('<div class="title-main">فريق روح مردك التطوعي</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitle-main">بوابة تسجيل الدخول الآمنة</div>', unsafe_allow_html=True)
+# --- بوابة تسجيل الدخول (Login Gate) ---
+if not st.session_state.get('user_email'):
+    st.markdown("<h2 style='text-align: center; color: #5D4037;'>🔐 تسجيل الدخول للنظام</h2>", unsafe_allow_html=True)
+    
+    with st.form("login_form"):
+        login_email = st.text_input("البريد الإلكتروني المعتمد للفريق", placeholder="example@gmail.com").strip().lower()
+        submit_login = st.form_submit_button("دخول وآمن")
         
-        with st.form("login_gate_form"):
-            login_email = st.text_input("📧 الرجاء إدخال البريد الإلكتروني المعتمد بالسجلات:", placeholder="username@gmail.com").strip().lower()
-            submit_login = st.form_submit_button("🔓 تسجيل الدخول للمنظومة")
+        if submit_login:
+            # 1. التحقق من الحسابات القيادية الافتراضية
+            allowed_admin_emails = ["2024.12.16.mst@gmail.com", "murduksoulteam@gmail.com"]
             
-            if submit_login:
-                allowed_masters = ["2024.12.16.mst@gmail.com", "loaiaboalwan7@gmail.com"]
-                cursor.execute("SELECT status FROM volunteers WHERE email=? AND status='حالي'", (login_email,))
-                is_active_volunteer = cursor.fetchone()
-                            # حفظ البريد في الجلسة والانتقال للرئيسية
-            st.session_state.user_email = login_email
-            st.success("✨ تم التحقق من الهوية الرقمية، جارٍ فتح النظام...")
-            st.rerun()
-        else:
-            st.error("🚫 عذراً! هذا البريد الإلكتروني غير مسجل حالياً أو تم إلغاء وصوله من قبل إدارة الموارد البشرية.")
-            st.stop()
+            # 2. التحقق من المتطوعين الحاليين في قاعدة البيانات
+            is_volunteer = False
+            try:
+                check_query = "SELECT COUNT(*) FROM volunteers WHERE LOWER(email) = ?"
+                cursor.execute(check_query, (login_email,))
+                if cursor.fetchone()[0] > 0:
+                    is_volunteer = True
+            except:
+                pass
+            
+            # اتخاذ قرار الدخول
+            if login_email in allowed_admin_emails or is_volunteer:
+                st.session_state.user_email = login_email
+                st.success("✨ تم التحقق من الهوية الرقمية، جارٍ فتح النظام...")
+                st.rerun()
+            else:
+                st.error("🚫 عذراً! هذا البريد الإلكتروني غير مسجل حالياً أو تم إلغاء وصوله من قبل إدارة الموارد البشرية.")
+                st.stop()
+    st.stop()
 
 # --- إدارة لوحة السحب والإطار الجانبي للتنقل (يخفى تماماً بالرئيسية) ---
-if st.session_state.current_view == "🏠 الواجهة الرئيسية":
-    # إخفاء قائمة التصفح الجانبية تماماً في الواجهة الرئيسية لراحة بصرية فائقة
+if st.session_state.get('current_view') == "🏠 الواجهة الرئيسية":
     st.sidebar.markdown("### 🔒 نظام الحماية النشط")
-    st.sidebar.info(f"👤 مرحباً بك:\n\n{st.session_state.user_email}")
+    st.sidebar.info(f"👤 مرحباً بك:\n\n{st.session_state.get('user_email', 'غير مسجل')}")
+r_email}")
