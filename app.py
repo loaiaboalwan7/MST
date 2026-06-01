@@ -284,7 +284,7 @@ if not st.session_state.logged_in:
             submit_login = st.form_submit_button("🔓 تسجيل الدخول للمنظومة")
             
             if submit_login:
-                allowed_masters = ["2024.12.16.mst@gmail.com", "murduksoulteam@gmail.com"]
+                allowed_masters = ["2024.12.16.mst@gmail.com", "loaiaboalwan7@gmail.com"]
                 cursor.execute("SELECT status FROM volunteers WHERE email=? AND status='حالي'", (login_email,))
                 is_active_volunteer = cursor.fetchone()
                 
