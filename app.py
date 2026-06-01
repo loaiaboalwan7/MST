@@ -281,7 +281,7 @@ if not st.session_state.get('user_email'):
         
         if submit_login:
             # 1. التحقق من الحسابات القيادية الافتراضية
-            allowed_admin_emails = ["2024.12.16.mst@gmail.com", "murduksoulteam@gmail.com"]
+            allowed_admin_emails = ["2024.12.16.mst@gmail.com", "loaiaboalwan7@gmail.com"]
             
             # 2. التحقق من المتطوعين الحاليين في قاعدة البيانات
             is_volunteer = False
